@@ -995,6 +995,150 @@ setwd( " C:\\Workspace\\workspaceR ")    #역슬레쉬 두개 써야함
 df <- read.table( file = "airguality.txt ", header = T )
 df
 
-
-
 class( df )
+
+#
+#Excel 파일 읽기
+#
+# Excel 파일 읽기용 패키지 설치
+install.packages( "xlsx" )            # Excel 파일 읽기 패키지
+install.packages( "rJava ")           # Java 실행 패키지
+
+# 기본 패키지 외에 설치된 패키지 사용 ( Library Load )
+library( rJava )                      #엑셀파일을 읽고싶으면 반드시 이 두 library를 읽어야함
+library( xlsx )                       #이 순서를 유지해야함
+
+df.xlsx <- read.xlsx( file = "airquality.xlsx",  # 파일 저장 경로 설정 
+                      sheetIndex = 1,
+                      encoding = "UTF-8" )
+df.xlsx
+class( df.xlsx )
+str( df.xlsx )
+head( df.xlsx )
+tail( df.xlsx )
+
+score <- c( 76, 84, 69, 50, 95, 6, 85, 71, 88, 84 )
+which( score ==69 )      # 조건에 만족하는 위치의 index
+which( score >= 85 )  
+max( score )
+which.max( score )       # 최고값의 index
+min( score )     
+which.min( score )       # 최저값의 index
+
+idx <- which( score >= 60 )
+score[ idx ] <- 61
+score
+
+idx <- which( df.xlsx[ , 1:2 ] == "NA", arr.ind = TRUE )
+                    # arr.ind = TRUE : 해당조건의 행/열값을 확인할 때 
+idx       
+
+#2.1 txt/text 파일 읽기
+#
+# text File 읽기
+setwd( "C:\\Workspace\\workspaceR" )
+df.txt <- read.table( file = "airquality.txt",
+                    header = T,
+                    encoding =  "UTF-8 ")
+df.txt
+
+class( df.txt )
+str( df.txt )
+head( df.txt )
+tail( df.txt )
+
+#2.2 자료의 종류
+#
+#-자료의 종류에 따라 적용할 수 있는 분석 방법이 다르다.
+#-분석을 해야할 자료를 가지고 있을 때 1차적으로 해야 할 일은
+# 해당자료가 어떤 분류에 속하는지를 파악하는 일이다.
+#
+#-자료 특성에 따른 분류
+# 분석 대장 자료의 특성에 따라 범주형 자료와 연속형 자료로 분류한다.
+#
+# 1. 범주형 자료( categorical data )
+#    - 범주 또는 그룹으로 구분할 수 있는 값
+#    - 범주형 자료의 값은 기본적을 숫자로 표현할 수 없고,
+#      대소비교나 산술연산이 적용되지 않는다.
+#    - 범주형 자료는 대체로 문자형 값을 갖는데, 숫자로 표기할 수 있으나 
+#      계산이 가능한 연속형 자료가 되는 것은 아니다.
+#
+# 2. 연속형 자료( ummerical data )
+#    - 크기가 있는 숫자들로 구성된 자료
+#    - 연속형 자료의 값들은 대소비교, 산술연산이 가능하기 때문에 다양한 
+#      분석 방법이 존재한다.
+# 
+# 자료( data ) : 어떤 주제를 가지고 값을 모아 놓은 것 전체
+# 관측값( odservation ) : "연구, 조사, 관찰하고 싶은 대상의 특성:"
+#
+# 번수 개수에 따라
+#    1. 단일변수 자료( univariate data ), 일변량의 자료
+#       하나의 변수로 구성된 자료
+#    2. 다중변수 자료( multivariate data ), 다변량 자료
+#       두 개이상의 변수로 구성된 자료
+#       특별히 두개의 변수로 구성된 자료를 이변량 자료 ( bivatiate data )
+#
+#     단일 변수 자료는 vector에 저장하여 분석
+#     다중 변수 자료는 matrix 또는 data frame에 저장하여 분석
+#
+# 변수의 개수와 자료의 특성에 따른 분류
+# 1. 단일변수 범주형 자료
+# 2. 단일변수 연속형 자료
+# 3. 다중변수 범주형 자료
+# 4. 다중변수 연속형 자료
+#
+# 2.3 단일 변수 범주형 자료 탐색
+#
+# 단일 변수 범주형 자료 : 특성이 하나이면서 자료의 특성이 범주형인 자료
+# 범주형 자료에 할 수 있는 기본작업 : 자료에 포함된 관측값들의 
+#                       도수분포표 <- 종류별로 개수를 세는 것,
+#                                     종류별로 비율을 구하는 것,
+#                                     시각화는 막대/원 그래프를 사용
+#
+#
+favorite <- c( 'WINTER', 'SUMMER', 'SPRING',
+              'SUMMER', 'SUMMER', 'FALL',
+              'FALL', 'SUMMER', 'SPRING', 'SPRING')
+favorite
+
+class( favorite )  #type
+str( favorite )    #내부 구조 
+dim( favorite )    #data 수
+
+
+#도수 분포표 작성
+table( favorite )
+
+# 도수 분포 비율 (0.0에서 1.0 사이)
+table( favorite ) / length( favorite )
+
+#시각화( 막대그래프)
+ds <- table( favorite )   #ds-도수분포표
+ds
+
+class( ds )
+str( ds )
+dim( ds )
+
+barplot( ds, main = 'favorite season')
+
+ds.new <- ds[c( 2, 3, 1, 4 ) ]
+ds.new
+barplot( ds.new, main = 'favorite season' )
+
+pie( ds, main = 'favorite season' )
+pie( ds.new, main = 'favorite season' )
+
+favorite.color <- c(2, 3, 2, 1, 1, 2, 2, 1, 3, 2, 1, 3, 2, 1, 2 )
+ds <- table( favorite.color )
+ds
+
+barplot( ds, main = 'favorite season' )
+
+colors <- c('green', 'red', 'blue' )
+names( ds ) <-  colors;
+ds
+barplot( ds, main = 'favorite season', 
+         col = colors )
+pie( ds, main = 'favorite season', 
+         col = colors )
