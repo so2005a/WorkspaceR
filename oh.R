@@ -273,7 +273,7 @@ condition <- v > 5 & v < 8
 condition
 v[ condition ]
 
-#3일차
+#
 #1. Review
 #
 # & 과 &&, | 와 || 차이
@@ -1071,7 +1071,7 @@ tail( df.txt )
 # 자료( data ) : 어떤 주제를 가지고 값을 모아 놓은 것 전체
 # 관측값( odservation ) : "연구, 조사, 관찰하고 싶은 대상의 특성:"
 #
-# 변수 개수에 따라
+# 번수 개수에 따라
 #    1. 단일변수 자료( univariate data ), 일변량의 자료
 #       하나의 변수로 구성된 자료
 #    2. 다중변수 자료( multivariate data ), 다변량 자료
@@ -1142,114 +1142,3 @@ barplot( ds, main = 'favorite season',
          col = colors )
 pie( ds, main = 'favorite season', 
          col = colors )
-
-#
-#
-# 2.4 단일 변수 연속형 자료 탐색
-# 단일 변수 연속형 자료 : 특성이 하나이면서 자료의 특성이 연속형인 자료 연속형 자료는 
-#                         관측값들이 크기를 가지므로 다양한 분석 방법 존재
-#
-# 1. 평균( mean ) : 하나의 값으로 전체를 대표할 수 있는 값, 이상값에 영향을 받는다.
-# 2. 중앙값( median ) : 자료의 값들을 크기순으로 정렬하였을 때 가장 중앙에 위치한 값,
-#                       이상값에 영향을 받지 않는다.
-# 3. 절사평균( trimmed mean ) : 자료의 관측값들 중에서 작은 값들의 하위 n% 와 큰값의 
-#                               상위 n%를 제외하고 중간에있는 나머지값들만 가지고 평균을 
-#                               계산하는 방식
-# 4. 사분위수 ( quatrile ) : 주어진 자료에 있는 값들을 크기순으로 나열 했을때 4등분 하는
-#                            지점에 있는 값
-#           1사분위수(Q1), 2사분위수(Q2, 중앙값과 동일), 3사분위수(Q3) 전체 자료를
-#           4개로 나누므로 4개 구간은 25%의 자료가 존재
-# 5. 산포 ( distribution ) : 주어진 자료에 있는 값들이 퍼져 있는 정도
-#    분산 ( variance ) : 주어진 자료의 각각의 값이 평균으로 부터 떨어져 있는 정도를 
-#                         계산하여 합산한 후 값들의 개수로 나누어 계산
-#    표준편차( standard deviation ) : 분산의 제곱근으로 계산
-
-#    시각화는 히스토그램( Histogram - 막대그래프 끼리 붙어있음  )과 상자 그래프 ( Box plot )를 사용
-#
-weight <- c( 60, 62, 64, 65, 68, 69 )
-weight
-
-weight.heavy <- c( weight, 120 )
-weight.heavy
-
-#평균
-mean( weight )
-mean( weight.heavy )
-
-#중앙값
-median( weight )
-median( weight.heavy )
-
-#절사 평균
-mean( weight, trim = 0.2 )
-mean( weight.heavy, trim = 0.2 )
-
-#사분위수
-quantile( weight.heavy )
-quantile( weight.heavy, (0:10) / 10 )
-   # ( 0 : 10 ) / 10 : 구간을 몇개로 나눌 것 인지를 지정 
-   # 0.1~1.0사이 백분율로 10% ~ 100%
-summary( weight.heavy )
-
-
-# 산포
-# 분산 
-var( weight )
-
-#표준편차
-sd( weight )
-
-#값의 범위(최소값과 최대값 )
-range( weight )
-
-#최대값과 최소값의 차이
-diff( range( weight ) )
-
-# 연속형 자료
-# Histogram : 연속형 자료의 분포를 시각화하는 도구
-#             연속형 자료에서의 구간을 나누고 구간에 속한 값들의 개수를 세는 방법으로 사용
-class( cars )
-str( cars )
-
-dist <- cars[ , 2 ]
-dist
-boxplot.stats( dist )  # 구체적인 값을 파악 할 때 사용
-                       # $stats : 사분위수
-                       # $n : 관측값의 수
-                       # $conf : 중간값에 대한 신뢰구간
-                       # $out : 특이값 ( 이상치 ) 목록
-hist( dist, main = "Histogram for 제동거리" ,
-      xlab = "제동거리", ylab = "빈도수",
-      border = "blue", col = "green",
-      las = 2, breaks = 5 )           #las : 숫자 모양?ㅋㅋ /breaks : 구간의 수
-#막대그래프는 범주형일 때, 연속형은 히스토그램을 쓴다.
-
-# 상자 그래프( 상자그림, boxplot, 상자 수염 그래프 )
-#  사분위수를 그래프형태로 시각화하는 도구
-#  상자그래프 하나의 그래프로 데이터 분포
-#  형태를 포함한 다양한 정보를 전달
-#  - 자료의 전반적인 분포를 이해하는데 도움
-#  - 구체적인 최소/최대/중앙값을 알기는 어렵다.
-boxplot( dist, main = '자동차 제동거리' )
-# 아래선이 최소값, 박스 아래선 1사분위, 굵은 선 중앙값, 박스 위선 3사분위, 맨위 선 최대값,
-# 동그라미 이상치
-
-boxplot.stats( dist )
-boxplot.stats( dist )$stats #정상범위 사분위수
-boxplot.stats( dist )$n     #관측치 수 
-boxplot.stats( dist )$conf  #중앙값 신뢰구간
-boxplot.stats( dist )$out   #특이값 ( 이상치 ) 목록
-
-# 일변량 연속형 데이터 그룹으로 구성된 자료의 상자그래프
-boxplot( Petal.Length~Species, data = iris, main = '품종별 꽃받침 길이 ' )
-
-str( iris )
-
-boxplot( iris$Petal.Length~iris$Species, data = iris, main = '품종별 꽃받침 길이 ' )
-
-# 한 화면에 여러 그래프 작성
-par( mfrow = c( 1, 3 ) )   # 1 x 3 가상화면 분할
-barplot(table( mtcars$carb ), main = "C", xlab = 'carburetors', ylab = 'freq', col = 'blue' )
-barplot(table( mtcars$cyl ), main = 'Cyl', xlab = 'cyl', ylab = 'freq', col = 'red' )
-barplot( table( mtcars$gear ), main = 'g', xlab = 'gear', ylab = 'freq', col = 'green' )
-par( mfow = c( 1, 1 ) ) # 가상화면 분할 해제 .
