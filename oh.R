@@ -8,7 +8,7 @@ class(5)
 3+5
 print(3+5)
 #
-#일반적인 출력 장치를 표준 풀력장치
+#일반적인 출력 장치를 표준 출력장치
 #라고하며, 장치 지정을 하지 않아도
 #장치를 지정하지 않아도 자동으로 사용되는 장치를 의미
 #
@@ -232,7 +232,7 @@ median( v )                   #증앙값
 median( v[  1:5 ])
 max( v )                      #최대값
 min( v )                      #최소값
-sort( v )                     #정렬 : 줄새우기
+sort( v )                     #정렬 : 줄새우기, sort는 오름차순
 sort( v, decreasing = FALSE )
 sort( v, decreasing = TRUE )
 range( v )                    #값의 범위( 최솟값~최대값 )
@@ -273,24 +273,728 @@ condition <- v > 5 & v < 8
 condition
 v[ condition ]
 
+#
+#1. Review
+#
+# & 과 &&, | 와 || 차이
+#
+vt <-  c( TRUE, FALSE )
+vt2 <-  c( FALSE, TRUE )
+
+vt & vt2     # 벡터 요소 각각에 대하여 AND 연산 수행
+vt && vt2    # 벡터 첫번째 요소에 대하여 AND 연산 수행 
+
+#
+# () 와 []의 차이
+#
+# () : 1. 연산식에서 우선순위 변경목적, 2. 함수에서 인수전달
+# [] : 벡터, 리스트, 매트릭스, 데이터프레임에서 요소를 지정하는 목적
+
+#
+#vector
+#
+v <- 1:10
+
+v > 5
+all( v > 5 )    # 벡터의 모든 요소가 조건에 만족하는가?
+any( v > 5 )    # 벡터의 요소중 조건에 만족하는게 있는가?
+
+head( v )       # 처음부터 일정 개수(defauit : 6개 )
+tail( v )       # 끝에서부터 일정 개수 (default : 6개 ) 
+head( v, 3 )    
+tail( v, 3 )
+
+#
+#집합 ( set ) : 중복 데이터가 없는 벡터
+#
+x <- c( 1, 2, 3 )
+y <- c( 3, 4, 5 )
+z <- c( 3, 1, 2 )
+
+union( x, y )      #합집합   
+intersect( x, y )  #교집합
+setdiff( x, y )    #차집합
+setequal( x, y )   #동일한 요소가 있는가 확인
+
+#
+# 2.1 List
+#
+# List : 동일 자료형, 다른 자료형을 저장할 수 있는 벡터
+#
+#list() : List 생성 함수key( 이름 ) = Vaiue( 값 ) 형식이다.          
+#
+v <- c( 90, 85, 70, 84 ) 
+l <- list( name = 'hong', age = 30, status = TRUE, score = v )
+l
+
+l[1]
+l[4]
+
+l[[1]]
+l[[4]]
+l[[4]][1]
+
+l$name
+l$score
+
+#
+# 2.2 factor( 범주형, categorical )
+#
+# factor 형 : 문자 형태로 저장되며 범위를 갖는 값을 저장
+#             하는 data type
+# factor() : 팩터형 벡터 생성 함수
+#
+bt <-  c( 'A', 'B', 'B', 'O', 'AB', 'A')  # 문자형 벡터
+bt.factor <- factor( bt )                 # 팩터형 벡터
+ 
+bt
+bt.factor
+
+gender <- c( '남', '여', '여', '남', '남', '여', '여','남')
+gender.factor <- factor( gender )
+
+gender
+gender.factor
+
+bt[ 3 ]
+bt.factor[ 3 ]
+
+gender[ 5 ]
+gender.factor[ 5 ]
+
+levels( bt.factor )
+levels( gender.factor )
+
+as.integer( bt.factor )
+as.integer( gender.factor )
+
+gender.factor[ 5 ]                   #warning(경고)는 무시해도 됨/erroe는 다름
+gender.factor[ 5 ] <-  ' 중 '
+gender.factor
+
+#
+# 2.3 matrix( 행렬, 2차원 배열 ) : 동일 자료형의 데이터를 저장하는 벡터의 집합
+#
+# row(행), observation(관측값), data
+# column(열), variable(변수)
+#
+# matrix() : matrix 생성 함수
+#
+
+z <- matrix( 1:20, nrow = 4 )   #열 우선으로 채움(기본)
+z
+
+class( z )      #타입을 알려줌
+str( z )        
+dim( z )
+
+z <- matrix( 1:20, nrow = 4, ncol = 5 )
+z
+
+z <- matrix( 1:20, nrow = 4, ncol = 5, byrow = T )
+z
+
+x <- 1:4
+y <- 5:8
+Z <- matrix( 1:20, nrow = 4,ncol = 5 )
+
+m1 <-  cbind( x, y )                    #bind는 연결이라는 뜻/ cbind는 가로안을 변수로 봄
+m1
+m2 <-  rbind( x, y )                    #rbind는 인수를 관측치로 보고 메트릭스를 만듬
+m2
+m3 <-  rbind( m2, x )
+m3
+m4 <-  cbind( z, x )
+m4
+
+#
+# matrix에서  cell의 값 읽기
+z[ 2, 3 ]
+z[ 1, 4 ]
+z[ 2, ]                        #(2, )는 2행 전체라는 뜻
+z[ ,4 ]
+
+z[ 2, 1:3 ]
+Z[ 1, c( 1, 2, 4 ) ]           #1행의 1열 2열 4열 이란 뜻
+Z [ 1:2, ]                     #1행과 2행의 전체(행이 두개여서 메트릭스로 나옴)
+Z[ , c( 1, 4 ) ]               #전체의 1열과 4열(열이 두개여서 메트릭스로 나옴)
+
+
+#
+#matrix 행/열에 이름 지정
+#
+score <- matrix( c( 90, 85, 69, 78, 
+                    85, 96, 49, 95,
+                    90, 80, 70, 70 ),
+                 nrow = 4, ncol = 3 )
+score
+
+rownames( score ) <- c( 'hong', 'kim', 'lee', 'yoo' )  # 행이름
+colnames( score ) <- c( 'english', 'math', 'science' )  # 열이름
+score
+
+score[ 'hong', 'math' ]
+score[ 'kim', c( 'math', 'science' ) ]
+score[ 'lee', ]
+score[ , 'english' ]
+
+rownames( score )
+colnames( score )
+colnames( score )[ 2 ]
+
+c <- colnames( score )
+c[ 2 ]
+
+#
+# 2.4 data frame
+#
+# data frame : matrix와 동일한 구조을 갖으며 자료형에 구애받지 않고 저장하는 matrix
+#
+#
+# data,frame( ) : data frame을 생성하는 함수
+#
+
+city <- c( 'seoul', 'busan', 'daejeon' )
+rank <- c( 1, 2, 3 )
+city.info <- data.frame( city, rank )
+city.info
+
+class( city.info )
+str( city.info )
+dim( city.info )                       #차원
+
+name <- c( 'hong', 'kim', 'lee' )
+age <- c( 22, 30, 25 )
+gender <- factor( c( 'm', 'f', 'm' ))
+blood.type <- factor( c( 'a', 'o', 'b' ))
+
+person.info <- data.frame( name, age, gender, blood.type )
+person.info
+str( person.info )
+
+#
+# data frame 요소 읽기
+#
+city.info[ 1, 1 ]
+city.info[ 1,  ]
+city.info[ , 1 ]
+city.info[ city.info$city == 'seoul', ]
+city.info[ , 'rank' ]
+
+person2.info <- data.frame( name = c ( 'hong', 'kim', 'lee' ),
+                             age= c( 22, 20, 25 ),
+                             gender = factor( c( 'm', 'f', 'm' )),
+                             blood = factor( c( 'a', 'o', 'b')))
+person2.info
+
+person.info$name
+person.info[ person.info$name == 'hong', ]
+person.info[ person.info$name == 'hong', c('name', 'age' )]
+
+data()
+
+iris
+head( iris )
+tail( iris )
+
+class( iris )
+str( iris )
+dim( iris )
+
+iris[ , c( 1:2 )]
+iris[ , c( 1, 2, 3 )]
+iris[ , c( 'Sepal.Length','Species' ) ]
+iris[ 1:5, ]
+iris[ 1:5, c (1, 3 ) ]
+
+#
+#matrix / dataframe 에서 사용하는 함수
+#
+class( state.x77 )
+class( iris )
+
+dim( state.x77 )
+dim( iris )
+
+str( state.x77 )
+str( iris )
+
+nrow( state.x77 )
+nrow( iris )
+
+ncol( state.x77 )
+ncol( iris)
+
+head( state.x77 )
+head( iris )
+
+tail( state.x77 )
+tail( iris )
+
+unique( iris[, 5 ])   #중복된 것 빼고중복 안되게금 나옴
+
+table( iris [, 5 ] )                             #그룹별로 개수를 샐 때/ 이 함수를 쓰려면 factor type이 유용하다. 
+       table( person.info[ , 'blood.type' ] )
+       table( person.info[ , 'gender'] )
+    
+#
+# matrix/data frame 산술 연산 함수
+#
+colSums( iris [ , -5 ] ); apply(iris[ , 1:4 ], 2, sum )     # 열별 합
+colMeans( iris[ , -5] ); apply(iris[ , 1:4], 2, mean )      # 열별 평균
+rowSums( iris[ , -5 ] ); apply( iris[ , -5 ], 1, sum )      # 행별 합
+rowMeans( iris[ , -5 ] ); apply( iris[ , -5 ], 1, mean )    # 행별 평균
+apply( iris[ , -5 ], 2, median )                            # 열별 중앙값 
+
+sx <- state.x77
+head( sx )
+sx.t <- t( sx )        # 행과 열의 방향 전환, 전치
+head( sx.t )
+
+#
+# 조건애 맞는 행과 열추출( data frame만 가능 )/matrix에선 못씀
+#
+subset( iris, Species == 'setosa' )
+subset( iris, Sepal.Length > 5.0 & Sepal.Width > 4.0 )
+
+subset( iris, Sepal.Length > 5.0 & Sepal.Width > 4.0 )[ , c( 2, 4 ) ]
+
+#
+# matrix/data frame 산술연산
+#
+m1 <- matrix( 1:20, 4, 5 )
+m1
+m2 <- matrix( 21:40, 4, 5 )
+m2
+
+2 * m1
+m2 - 5
+2 * m1 + 3 *m2
+
+m1 + m2
+m2 - m1
+m2 / m1
+m1 * m2
+
+#
+# matrix를 data frame으로, data frame을 matrix로 변환
+#
+st <- data.frame( state.x77 )
+class( st)
+str( st )
+dim( st )
+
+iris.m <- as.matrix( iris )
+class( iris.m )             #.m하면 메트릭스로 변환해라
+str( iris.m )
+dim( iris.m )
+
+# data type 확인 함수
+is.matrix( state.x77 )
+is.matrix( iris.m )
+is.data.frame( st )
+is.data.frame( iris )
+
+#
+# R의 데이터 타입 : 숫자, 문자, 논리, factor, NULL, NA
+#       -변수
+#      # 1차원 배열
+#       -vector
+#       -list
+#      # 2 차원 배열
+#       -matrix
+#       -data frame
+
+#
+# 2.5 파일 읽기/쓰기
+#
+# csv file 내용 읽어서  data frame 생성 / csv(comma seperator velue)
+#
+air <-  read.csv( 'C:\\Workspace\workspaceR\\airquality.csv',  header = T )   #맨 위의 첫줄을 
+air2 <- read.csv( 'C:\\Workspace\workspaceR\\airquality.csv', header = F )
+
+class( air )
+class( air2 )
+
+str( air )
+str( air2 )
+
+dim( air )
+dim( air2 )
+
+air
+air2
+
+#day4
+#
+# 1. Review
+#
+# 변수명 / 표준 입력 / 표준 출력
+#
+# 변수명 부여 방식( 항상 소문자로 시작한다. )
+numberValue <- 1                     # camel 표기법 : 시작은 소문자인데 중간에 대문자(낙타)
+str_value <-  " R Language "         # snake 표기법 : 소문자로 시작해서 '_'를 이용 
+booleanvalue <- TRUE                 # 일반 표기법  : 다 소문자 일반 방식, 단어 구분이 명확하지 않음, 의미전달이 바로 X
+
+# 표준 출력 장치에 출력
+#
+# print() : 자동 줄바꿈( \n, 자동 개행 )
+numberValue; print( numberValue )
+str_value; print( str_value )
+booleanvalue; print( booleanvalue )
+
+# cat() : 여러내용을 출력할 수 있고, 자동 줄바꿈이 일어나지 않는 표준 출력 장치에 출력하는 함수
+# 제어 문자 : 화면에 충력되지 않고 기능을 수행하는 문자 
+# \n : 개행 문자 ( 줄바꿈 )
+# \t : tap 문자
+#
+cat( 'Numeric number : ', numberValue, '\n' )
+cat( ' String : ', str_value, '\n' )
+cat( 'Boolean value : ', booleanvalue, '\n' )
+print( ' ------------------------------------' )
+cat( 'Numberic number : ', numberValue, '\t' ,
+     'String : ', str_value, '\t',
+     'Boolean value : ', booleanvalue, '\n' )
+#
+#표준 입력 장치로 부터 입력
+#
+# scan( ) : 표준 입력 장치로 부터 입력 받는 함수
+# readline( ) : 표준 입력 장치로부터 입력 받는 함수 
+# edit( ) : 표준 입력 장치로부터 표형식 입력 받는 함수 
+#
+inputData <- scan() # 빈줄이 입력될때 까지 숫자를 입력 받는다.
+class( inputData ) 
+inputData
+
+inputData <- scan( what = character() ) # 문자 입력 방식
+class( inputData )
+inputData
+
+inputData <- readline( 'Input data <- ' )
+class( inputData )
+inputData
+
+
+number1 <- readline( 'Input number1 : ' )
+number2 <- readline( 'Input number2 : ' )
+result <- as.numeric( number1 ) + as.numeric( number2 )
+result
+
+#
+#실습 문제 : 두 수를 입력 받아서 다음과 같이 출력
+# 입력
+#      Input number1 : [ 10 ]
+#      Input number2 : [ 5 ]
+#  출력결과
+#      10 + 5 = 15
+#      10 - 5 = 5
+#      10 * 5 = 50
+#      10 / 5 = 2
+#      10 %% 5 = 0
+
+number1 <- readline( 'Input number1 - ' )
+class( inputdata )
+inpudata
+
+
+#
+number1 <- as.numeric( readline( 'Input number1 : ' ) )
+number2 <- as.numeric( readline( 'Input number2 : ' ) )
+
+resultAdd <- number1 + number2
+resultSub <- number1 - number2
+resultMul <- number1 * number2
+resultDiv <- number1 / number2
+resultRem <- number1 %% number2
+
+cat( number1, ' + ', number2, ' = ', resultAdd, '\n',
+     number1, ' - ', number2, ' = ', resultSub, '\n',
+     number1, ' * ', number2, ' = ', resultMul, '\n',
+     number1, ' / ', number2, ' = ', resultDiv, '\n',
+     number1, ' %% ', number2, ' = ', resultRem, '\n' )
+
+#
+#2.1 Algorithm 이해
+#
+#Algorithm( Logic ) : 문제를 해결하기 위한 일처리 순서
+#
+#Algorithm 요건
+# 1. 입력 : 반드시 0개 이상의 입력이 있어야 한다. / 0개는 없을 수도 있다.
+# 2. 출력 : 반드시 1개 이상의 출력이 있어야 한다.
+# 3, 유한성 : 반드시 끝낼수 있어야한다.
+# 4. 효과성 : 효과적인 방법으로 정의되어야 한다.
+# 5. 명확성 : 명확한 방법으로 정의 되어야 한다.
+#
+# 컴퓨터 프로그램의 구조
+#
+# - 순차구조 : 시작부터 끝날때 까지차례대로 수행
+# - 선택구조 : 조건에 따라 처리 방향을 바꾸어서 수행
+# - 반복구조 : 조건이 만족하는 동안 동일한 내용을 반복 수행
+# 컴퓨터 프로그램은 알고리즘에 기반으로 기억장소 원리와 
+#                   순차/ 선택/ 반복구조를 조합하여 작성한다.
+
+#
+# 2.2 선택 구조
+#
+# 선택 구조 종류
+# 1. 단순 선택 구조
+# 2. 양자 선택 구조
+# 3. 다중 선택 구조
+# 4. 중첩 선택 구조
+#
+# 1. 단순 선택 구조
+job.type <- 'A'
+bonus <- 0
+if ( job.type == 'A' ) {                       # if다음에는 ()룰 해야함/ {} : code block( code 집합 )
+    bonus <- 200
+}
+cat( 'job type : ' , job.type, '\t\tbonus : ', bonus )
+
+# 2. 양자 택일 구조
+job.type <- 'B'
+bonus <- 0
+if ( job.type == 'A' ) {                       # if다음에는 ()룰 해야함/ {} : code block( code 집합 )
+    bonus <- 200
+} else {                                       #  조건이 거짓일 때 else 밑에 있는 100을 선택 / else 는 줄바꾸면 안됨  
+    bonus <- 100
+}
+cat( 'job type : ' , job.type, '\t\tbonus : ', bonus )
+
+# 3. 다중 선택 구조
+score <- 50
+if ( score >=90 ) {
+    grade <- 'A'
+} else if ( score >= 80 ) {
+    grade <- 'B'
+} else if ( score >= 70 ) {
+    grade <- 'c'
+} else if ( score >= 60 ) {
+    grade <- 'D'
+} else {
+    grade <- 'F'
+}
+cat( 'score : ', score, '\t\tgrade : ', grade )
+
+# 4. 중첩 선택 구조
+a <- 2
+b <- 1
+c <- 3
+if ( a > b ) {
+    if ( a > c ) {
+        max <- a
+        if ( b > c ) {
+            mid <-  b; min <- c
+        } else {
+            mid <-  c; min <- b
+        }
+    } else if ( c > b ) {
+        max <- c; mid <- a; min <- b
+    }
+} else if ( b > c) {
+    max <- b
+    if ( a > c ) {
+        mid <- a; min <- c
+    } else {
+        mid <- c; min <- a
+    }
+}
+cat( 'max : ', max, '\tmid : ', mid, '\tmin : ', min )
+
+number <- 10
+reminder <- number %% 2
+
+if ( reminder == 0 ) {
+    oddeven <- ' 짝수 '
+} else {
+    oddeven <- '홀수 '
+}
+cat( 'Number : ', number, ' 는 ', oddeven, ' 이다. ' )
+
+a <- 5
+b <- 20
+
+if ( a > 5 & b > 5 ) {
+    cat( a, ' > 5 and ', b, ' > 5 ' )
+} else {
+    cat ( a, ' <= 5 or ', b, ' <= 5 ' )
+}
+
+a <- 8; b <- 5; c <- 10; max <- a
+if ( b > max ) {
+    max <- b
+}
+if ( c > max ) {
+    max <- c
+}
+cat( ' a = ', a, ' b = ', b, ' c = ', c, ' max = ', max )
+
+a <- 8; b <- 5; c <- 10; min <- c
+if ( a < min ) {
+    min <- a
+}
+if ( b < min ) {
+    min <- b
+}
+cat( ' a = ', a, ' b = ', b, ' c = ', c, ' min = ', min )
+
+# 
+#실습 문제 : 하나의 숫자를 입력 받아 짝수인지 홀수 인지 출력
+
+number <-as.numeric( readline( 'Input number : ' ) )
+if ( number %% 2 == 0 ) {
+    cat( number, '는 짝수입니다. ' )
+} else {
+    cat( number, '는 홀수 입니다. ' )
+}
+
+#
+# 실습 문제 : 하나의 숫자를 입력받아 3의 배수이면 "3의 배수"
+#                                    5의 배수이면 "5의 배수"
+#                                    3, 5의 배수가 아니면 "3, 5의 배수가 아닙니다."
+#                                    출력
+
+number <- as.numeric( readline( 'Input number : ') )
+if ( number %% 3 == 0 ) {
+    cat( number, ' 3의 배수' )
+} else if ( number %% 5 == 0 ) { 
+     cat( number, ' 5의 배수 ' )
+} else {
+    cat( number, ' 3, 5의 배수가 아닙니다. ' )
+}
+
+#
+# 2.3 반복 구조
+#
+#반복구조 : 조건이 만족하는 동안 동일한 내용을 반복 수행
+#
+#   1. 반복 횟수가 정해진 경우 : for
+#   2. 반복 횟수가 정해지지 않은 경우 : while
+#
+#   for문 : for( [반복제어변수] in [반복범위] ) { }
+#
+for ( i in 1:10 ) {     # i 가 반복 제어 변수 i는 임의로 정한 것 
+    print( '*' )
+}
+
+for ( i in 1:10 ) {
+     cat( i, ' ')
+}
+
+multiple = 2
+for ( i in 2:9 ) {
+    cat(multiple, ' * ', i , ' = ', multiple * i, '\n' )
+}
+
+for ( i in 2:9 ) {
+    for ( j in 1:9 ) {
+        multiple = i * j
+        cat( multiple, '\t' )
+    }
+}
+
+#
+#반복 제어 변수 초기화 
+#while ( 반복 제어 변수 조건 검사 ) {
+# 반복 제어 변수 값 변경
+# }
+
+i <-  1  #반복제어 변수 초기화
+while( i <= 10 ) { # 반복 제어 변수 조건 검사, 참인 동안 반복
+    print( ' * ')  
+    i <- i + 2      # 반복 제어 변수 값 변경, 누적
+}
+
+i <- 2
+while ( i <= 9 ) {
+    j <- 1
+    while ( j <=9 ) {
+        multiple = i * j
+        cat( multiple, '\t' )
+        j <-  j + 1
+    }
+    cat( ' \n ' )
+    i <- i + 1
+}
+#
+# 2.4 함수 
+#
+# 함수( Function ) : 단위 기능을 수행하는 코드 집합
+#
+# 함수 종류
+# 1, 내장 함수 : R에 미리 내장된 함수( 기본 함수 )
+# 2. 3rd party 함수 : 제 3 자가 작성하여 배포한 함수
+# 3. 사용자 정의 함수 : 사용자가 직접 정의한 함수
+#
+# 함수 형식
+#
+# 함수 이름(명) <-  function( 인수 목록 ) {
+#       함수 내용에 해당하는 코드 집합
+#       return ( return 값 ) 
+#   }
+# 함수 호출
+#
+#   함수명 ( 인수 목록 )
+#
+
+# 함수 정의
+multiple <- function( x ){
+    for ( i in 1:9 ) {
+        multiple <- x * i
+        cat( x, ' * ', i, ' = ', multiple, ' \n ' )
+    }
+}
+
+# 함수 호출
+multiple( 2 )
+
+# return 값이 있는 함수
+mymax <- function( x, y ) {
+    unm.max <- x
+    if ( y > num.max ) {
+        num.max <- y
+    }
+    return( num.max )
+}
+
+mymax( 5, 6 )
+
+a <- 10; b <- 5; c <- 8
+max <- mymax( a, b ); max <- mymax( max, c )
+max
+
+#return값이 여러개인 함수
+myCalc <- function( x, y ) {
+    add <- x + y
+    sub <- x - y
+    mul <- x * y
+    div <- x / y
+    rem <- x %% y
+    return( list( ret.add = add, ret.sub= sub, ret.mul = mul,
+                  ret.div = div, ret.rem = rem ) )
+}
+
+result <- myCalc( 10, 5 )
+cat( '10 + 5 = ', result$ret.add, '\n' )
+cat( '10 - 5 = ', result$ret.sub, '\n' )
+cat( '10 * 5 = ', result$ret.mul, '\n' )
+cat( '10 / 5 = ', result$ret.div, '\n' )
+cat( '10 %% 5 = ', result$ret.rem, '\n' )
+
+myCalc2 <- function( x, y ) {
+   result <- c( x + y , x - y, x * y, x / y, x %% y )
+   return ( result )
+}
+
+myCalc2( 10, 5)
+
+#
+# 5일차
+#
+# Text 'File 읽기'
+setwd( " C:\\Workspace\\workspaceR ")    #역슬레쉬 두개 써야함 
+df <- read.table( file = "airguality.txt ", header = T )
+df
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class( df )
