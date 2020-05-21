@@ -1142,3 +1142,916 @@ barplot( ds, main = 'favorite season',
          col = colors )
 pie( ds, main = 'favorite season', 
          col = colors )
+
+#
+#6일차
+#
+# 2.1 다중변수 자료 탐색
+#
+# - 다중변수 ( 다변량 ) 자료는 변수가 2개 이상인 자료
+# - 다중변수 자료는 2차원 형태, matrix나 data frame에 저장하여 분석
+# - 다중변수 자료에서 변수는 열 (column), 개별 관측값들이 행(row)로 구성
+#
+# 산점도( scatter plot ) 2개의 변수로 구성된 자료의 분포를 알아보는 그래프 관측값들의 분포를 2개의
+#                        변수 사이의 관계를 파악할 수 있는 기법
+#                                 
+# - 산점도는 두 변수의 데이터 분포를 나타내는 것이기 때문에 두개의 변수에 대한 자료가 필요
+# - 산점도는 관측값들의 분포를 보면서 두 변수 사이의 관련성을 확인하는데 사용
+#
+# 두 변수 ( 이변량 )에 대한 산점도
+str( mtcars )
+wt <- mtcars$wt
+wt
+mpg <- mtcars$mpg
+mpg
+
+plot( wt, mpg, 
+      main = "중량-연비 그래프",
+      xlab = "중량",
+      ylab = "연비(MPG)",
+      col = "red",
+      pch = 25 )
+
+plot( mtcars$wt, mtcars$mpg, 
+      main = "중량-연비 그래프",
+      xlab = "중량",
+      ylab = "연비(MPG)",
+      col = "red",
+      pch = 19 )
+
+plot( mtcars[ , c( "wt", "mpg" ) ],   # 요소 지정 방식 
+      main = "중량-연비 그래프",
+      xlab = "중량",
+      ylab = "연비(MPG)",
+      col = "red",
+      pch = 20 )
+
+plot( mpg~wt, data = mtcars,        # 데이터 셋을 이용한 산점도 
+      main = "중량-연비 그래프",
+      xlab = "중량",
+      ylab = "연비(MPG)",
+      col = "red",
+      pch = 10 )
+
+# 위 4가지 유형 중 아무거나 써도 됨 결과는 같음
+
+#2개 이상의 변수(다변량)에 대한 산점도
+vars <- c( "mpg", "disp", "drat", "wt" )
+target <- mtcars[ , vars ]
+head( target )
+
+pairs( target, main = "multi plots" )
+
+plot( target, main = "multi plot")
+
+# - pairs( )는 여러 개의 변수에 대해 짝지어진 산점도 작성
+# - 다중 산점도는 대각선을 기준으로 오른쪽 위의 산점도들과 왼쪽 아래의 산점도들이 대칭을 이룬다.
+#   ( 동일한 산점도인데 x축과 y축이 바뀌어 있다. )
+# - 다중 산점도는 여러 변수들 간의 추세를 한눈에 파악할 수 있다.
+#
+# - 두개의 변수에 대한 산점도를 작성할 때 그룹 정보를 알고있다면 작성시 각 그룹별 관측값들에 대해
+#   서로 다른 색과 점의 모양으로 표시할 수 있다.
+#   두 변수 간의 관계뿐 아니라 그룹 간의 관계도 파악 할 수 있다.
+#
+iris.2 <- iris[ , 3:4 ]
+point <- as.numeric( iris$Species )
+point
+color <- c( "red", "green", "blue")
+
+plot( iris.2, main = "Iris plot",
+      pch = c( point ),
+      col = color[ point ] )
+
+#
+#2.2 상관분석
+#
+# - 두 변수간의 관계를 분석시 추세의 모양이 선의 형태를 갖는 것을 선형적 관계라 표현한다.
+#
+# - 선형적 관계는 강한 선형적 관계가 있고 약한 선형적 관계가 있다.
+#
+# - 상관분석( correlation analysis )
+#    : 얼마나 선형성을 보이는지 수칙상으로 나타내는 방법
+#
+# - 상관계수( correlation coefficient )는 선형성의 정도를 나타내는 척도
+# - 상관계수 r의 성질
+#   -1 <= r <= 1
+#   r > 0 : 양의 상관계수( x 가 증가하면 y 도 증가 )
+#   r < 0 : 음의 상관계수( x 가 증가하면 y 는 감소)
+#   r이 1이나 -1에 가까울수록 x, y의 상관성이 높다.
+#
+# - 상관계수값이 1이나 -1에 가까울수록 관측값들의 분포가 직선에 가까워진다.
+#
+beers <- c( 5, 2, 9, 8, 3, 7, 3, 5, 3, 5 )
+bal <- c( 0.1, 0.03, 0.19, 0.12, 0.04, 0.0095, 0.07, 0.06, 0.02, 0.05 )
+tbl <- data.frame( beers, bal )
+tbl
+
+plot( bal~beers, data = tbl )
+res <- lm( bal~beers, data = tbl )   #회귀식 도출 (ex) y=wx+b (직선의 방정식)
+abline( res )                       #회귀선 그리기(선을 그려주는 역할)/ 회귀식이 완성되게 만들어 주는 건 'lm'
+cor( beers, bal )                    #상관 계수 계산( 0.5 보다 높으면 양의 상관 관계가 높다라는 뜻)
+
+par( mfrow = c( 1, 2 ) )
+plot( wt~mpg, data = mtcars,
+      main = "중량-연비 그래프",
+      xlab = "중량",
+      ylab = "연비(MPG)",
+      col = "red",
+      pch = 19 )
+res = lm( wt~mpg, data = mtcars )
+abline( res )
+plot( drat~wt, data = mtcars,
+      main = "리어액슬기어비-중량 그래프",
+      xlab = "리어액슬기어비",
+      ylab = "중량",
+      col = "red",
+      pch = 19 )
+res <-  lm(drat~wt, data = mtcars )
+abline( res )
+par( mfrow = c( 1 ,1 ) )
+
+cor( mtcars$wt, mtcars$mpg )
+cor( mtcars$drat, mtcars$wt )  # -0.5이하이면 음의 상관계수가 높다라는 뜻
+
+cor( iris[ , 1:4 ] )
+
+
+
+#
+# 시계열 자료( tinmes series data ) : 시간의 변화에 따라 자료를 수집한 경우 ex) 주식
+#
+# 선그래프 : 다중변수 자료의 변수 중 하나가 연월이과 같이 시간을 나타내는 값을 갖는 경우 x축을
+#            시간축으로 하여 변화에 따른 자료의 증감추이를 확인할 때 사용
+#
+month <- 1:12
+late <- c(5, 8, 7, 9, 4, 6, 12, 13, 8, 6, 6, 4 )
+plot( month,                    # x data        
+      late,                     # y data
+      main = "지각생 통계",     # 제목
+      type = "o",               # 그래프의 종류, l, b, s, o
+      lty = 1,                  # 선의 종류  
+      lwd = 1,                  # 선의 굵기
+      xlab = "month",           # x축 레이블
+      ylab = " Late cnt" )      # y축 레이블
+
+
+month <- 1:12
+late1 <- c(5, 8, 7, 9, 4, 6, 12, 13, 8, 6, 6, 4 )
+late2 <- c(4, 6, 5, 8, 7, 8, 10, 11, 6, 5, 7, 3 )
+plot( month, late1, main = "지각생 통계",
+      type = "b", lty = 1, lwd = 1, col= "red", ylim = c( 1, 15 ), xlab = "Month", ylab = "Late cnt" )
+
+
+lines( month, late2, type = "b", col = "blue" )
+
+#
+#2.3 자료 데이터 분석 실습(EDA)
+#
+
+#
+# 1. 분석 대상 데이터셋 준비
+#
+
+# Boston Housing 데이터셋 활용
+install.packages( "mlbench" )
+
+library( mlbench )
+data( "BostonHousing" )
+myds <- BostonHousing[, c( "crim", "rm", "dis", "tax", "medv") ]
+
+myds
+class( myds )
+dim( myds )
+str( myds )
+head( myds )
+
+#
+# 2. 필요한 변수 추가 - 선택적으로 수행
+#
+# crim : 지역 1인당 범죄율, rm : 주택 1가구당 방의 개수
+# dis : 보스턴 5개 직업 센터까지 거리
+# tax : 재산세율, medv : 주택가격
+grp <- c()
+for (i in 1:nrow( myds ) ) {
+    if ( myds$medv[ i ] >= 25.0 ) {
+        grp[ i ] <-  " H "
+    } else if ( myds$medv[ i ] <= 17.0 ) {
+        grp[ i ] <-  " L "
+    } else {
+        grp[ i ] <-  " M "
+    }
+}
+grp <-  factor( grp )
+grp <-  factor( grp, levels = c( " H ", " M ", " L " ) )
+
+myds <- data.frame( myds, grp )
+
+#
+# 3. 데이터세 형태와 기본적인 내용 파악
+str( myds )
+head( myds )
+table( grp )
+
+#
+# 4. 히스토그램을 이용한 관측값 분포 확인
+#
+par( mfrow = c( 2, 3 ) )
+for ( i in 1:5 ) {
+    hist( myds[ , i ], main = colnames( myds )[ i ],
+          col = "yellow" )
+}
+par( mfrow = c( 1, 1 ) )
+
+#
+# 5. 상자 그래프에 의한 관측값 분포 확인
+#
+par( mfrow = c( 2, 3 ) )
+for( i in 1:5 ) {
+    boxplot( myds[ , i ], main= colnames( myds )[ i ] )
+}
+par( mfrow = c( 1, 1 ) )
+
+#
+# 6. 그룹별 관측값 분포 확인
+#
+boxplot( myds$crim~myds$grp, main = "1인당 범죄율" )
+boxplot( myds$rm~myds$grp, main = "방의 개수" )
+
+#
+#7. 다중 산점도를 이용한 변수간 상과 관계 확인
+#
+pairs( myds[ , -6 ] )
+
+#
+# 8. 그룹정보를 포함한 변수 간 상관 관계
+#
+point <- as.integer( myds$grp )
+color <- c( "red", " green", "blue" )
+pairs( myds[ , -6 ], pch = point,
+       col = color[ point ] )
+
+#
+# 9. 변수간 상관 계수 확인
+#
+cor( myds[  , -6 ] )
+
+#
+#7day
+#
+# 2.1 데이터 전처리 이해
+#
+# 데이터 전처리( data preprocessing )
+# 초기에 확보한 데이터를 정제하고 가공해서 분석에 적합한 데이터를 확보하는 과정
+#
+# 데이터 전처리는 전체분석과정 중 매우 오랜시간을 차지하기 때문에 이를 효과적으로 처리하는 방법을 알고 
+# 적용하는 것이 중요
+#
+
+# 데이터 전처리 내용
+# 1. 결측치 처리 - 값이 없는 경우
+# 2. 특이값 처리 - 값은 있으나 값이 문제에 맞지 않는 경우
+# 3. 데이터 가공 - 원본 data에는 없는 내용을 추가, 변형 / 반드시는 아님
+
+# 2.2 결측값 처리
+#
+# 결측치( 결측값, misssing value )
+#  데이터를 수집하고 저장하는 과정에서 저장할 값을 얻지 못하는 경우 발생, R에서는 NA로 표기
+#
+# 결측치 종류 ( 대부분이 1번, 2번 )
+#  1. 완전 무작위 결측( MCAR,misson completely at random )
+#     어떤 변수 상에 결측치가 관측된 또는 관측되지 않은 다른 변수와 아무 연관이 없는 경우 
+#  2. 무작위 결측 (MAR, missing at random )
+#     어떤 변수 상에 결측치가 관측된 다른 변수와 연관되어 있지만 그자체의 비관측된 값들과는 연관이 없는 경우
+#  3. 비 무작위 결측 (NMAR, not missing at random )
+#     어떤변수의 결측치가 완전 무작위 결측, 무작위 결측이 아니라며 비 무작위 결측에 해당 
+
+# 결측치 처리 방법
+# 1. 결측치를 제거하거나 제외한 다음 데이터를 분석한다. 
+# 2. 결측치를 주정하여 적당한 값으로 치환한 후 데이터를 분석한다. 
+# 3. 시뮬레이션을 사용한 다중대체 방법
+#    다중대체( MI, Multiple, Imputation ) : 결측치에 대한 반복 시뮬레이션에 기반한 접근법
+#                                           복잡한 결측치 문제를 다루는데 사용하는 방법
+#
+# 벡터( vector )에 대한 결측치 처리
+#
+# R에서는 결측치를 NA로 표기 
+# NA는 숫자형, 문자형, 논리형 값 어디에서나 결측치를 나타내는 용도로 사용
+# 
+# 결측치 특성과 존재 여부 확인
+z <- c( 1, 2, 3, NA, 5 , NA, 8 )
+sum( z )
+is.na( z )              # NA 여부 확인/ is는 확인하는 함수 항상 결과값이 논리값으로 나옴
+sum( is.na( z ) )       # NA 개수 확인
+sum( z, na.rm = TRUE )  # NA를 제외한 합계 계산/ NA가 들어가있으면 산술연산이 안됨 
+
+# 결측치 대체 및 제거 
+z1 <- c(1, 2, 3,NA, NA, 8 )
+z2 <- c( 5, 8, 1, NA, 3, NA, 7 )
+z1[ is.na( z1 ) ] <- 0           #NA를 0으로 대체/TRUE의 요소만 
+z1
+z3 <- as.vector( na.omit( z2 ) ) #NA를 제거하고 새로운 vector 생성/ na.omit는 na를 제거해주는 함수
+z3
+
+#
+# 매트릭스와 데이터 프레임 결측치 처리
+#
+x <- iris
+x[ 1, 2 ] <- NA
+x[ 1, 3 ] <- NA
+x[ 2, 3 ] <- NA
+x[ 3, 4 ] <- NA
+head( x )
+
+# 데이터프레임 결측치 확인((열, col) 변수에 대한 확인 )
+#
+# for문 이용
+for ( i in 1:ncol( x ) ) {
+    this.na <- is.na( x[ i ] )
+    cat( colnames( x )[ i ], "\t", sum( this.na ), "\n")
+}
+
+# apply() 이용 
+col_na <- function( y ) {
+    return ( sum( is.na( y ) ) )      
+}
+
+na.count <- apply( x, 2, FUN = col_na )  
+na.count
+
+# 데이터프레임 결측치 확인( 관측치( 행, row )에 대한 확인 )
+#
+rowSums( is.na( x ) )              # 관측치별 NA개수  (rowSuns 행의 합)
+sum( rowSums( is.na( x ) ) > 0 )   # NA가 포함된 관측치 개수 
+sum( is.na( x ) )                  # dataset 전체에서의 NA 개수
+
+install.packages( "mice" )
+
+library( mice )
+
+mean( is.na( x ) ) #결측치 비중
+mean( is.na( iris ) )
+
+result <- md.pattern( x )  # 결측치 유형에 대한 표 작성 ( 0은 결측치, 1은 정상 )
+result
+write.csv( result, "md_iris.csv", row.names = T )
+md.pattern( iris )
+
+# 결측치 탁생을 위한 상관관계 분석
+result.cor <- as.data.frame( abs( is.na( x ) ) )
+result.cor
+result.cor.final <- result.cor[ which( apply( result.cor, 2, sum ) > 0) ]  #which는 index값을 알아올때 쓴다.
+cor( result.cor.final )
+
+#결측치를 가진 변수와 모든 변수와의 상관관계 분석
+result.cor.full <- cor( result.cor, result.cor.final, use = "pairwise.complete.obs" )
+result.cor.full
+
+#
+# 데이터프레임의 결측치 제거
+#
+#complete.cases() : dataset에서 NA를 포함하지 않은 완전한( complete )행을 찾는 함수
+#
+head( x )
+x[ !complete.cases( x ), ]
+y <- x[ complete.cases( x ), ]
+head( y )
+
+#
+# 결측치가 많은 dataset 인 경우 결측치가 포함된 관측치(행)를 모두 제거해 버리면 실제로 남아 있는 관측치(행)가
+# 별로 없을 수 있으므로 분석이 어려운 경우가 생긴다.
+# 위와 같은 경우 만약 결측치가 특정 변수(열)에 모여있다면 해당 변수(열)민 제거한 후 분석하는 것도 하나의 
+# 방법이다.
+#
+# 결측치가 여러 변수(열)에 흩어져 있는 경우에는 결측치를 적당한 값으로 추정하여 대체한 후 분석 할 수 있다.
+#
+# 결측치를 추정값으로 대체하여 분석할 경우 분석의 신뢰도가 떨어질 수 있으나 아무런 분석을 못하는 것 보다는
+# 나은 방법이 될 수 있다.
+#
+#2.3 특이값 처리
+#
+# 특이값( outlier 이상치 ) : 정상적이라고 생각되는 데이터 분포 범위 밖에 위치하는 값들, 입력 오류나
+#                            실제 특이값일수도 있다.
+#                            특이값의 성질은 제조공정의 불량품 선별, 은행 거래 시스템의 사기 거래 탐지할 때
+#                            사용하기도 한다.
+#
+# 데이터 분석시 특이값을 포함한 채 평균 등의 계산을 하면 전체 데이터 양상 파악에 왜곡을 가져올 수 있으므로
+# 분석시 제외하는 경우가 많다.
+#
+# dataset에 특이값이 포함되어 있는지 여부 조사 방법
+# 1. 논리적으로 있을 수 없는 값이 있는지 찾는다. 특별한 방법이 없기 때문에 분석자가 각 변수의 특성을 이해
+#    한 후 특이값 탐색
+# 2. 상식을 벗어난 값이 있는지 찾는다.
+# 3. 상자그래프를 통해 찾는다.
+
+#
+# 특이값 찾기
+#
+# 상자그래프를 이용한 특이값 찾기
+st <- data.frame( state.x77 )
+boxplot( st$Income )
+boxplot.stats( st$Income )$out
+
+#
+# 특이값 처리 - 특이값 포함 관측치(행) 제거
+#
+# 일반적으로 특이값 포함 관측치(행) 제거는 특이값을 NA로 바꾸고 NA를 포함한 행을 제거하는 방식으로 진행
+#
+# %n% : 어떤 벡터에 비교하고자 하는 값이 포함되어 있는 지 알고 싶을때 사용
+
+out.val <- boxplot.stats( st$Income )$out   # 특이값 검출
+st$Income[ st$Income %in% out.val ] <-  NA  # NA로 대체
+head( st )                                  
+
+newdata <- st[ complete.cases( st ), ]       # NA로 포함 행 제거
+head(newdata)
+
+#
+# 2.4 데이터 가공
+#
+# 데이터 가공( processing ) : 수집한 데이터에 대하여 분석을 용이하게 하기 위한 정렬, 집계, 병합등과 관련한 작업
+#
+# 1. 정렬( sort ) : 데이터를 주어진 기준에 따라 크기순으로 재배열하는 과정 
+#                   데이터 분석시 빈번히 수행하는 과정 
+# order( ) : 주어진 열의 값들에 대한 순서를 붙이는 함수 값의 크기를 기준으로 작은 값부터 시작해서 번호부여
+#
+v1 <- c( 1, 7, 6, 8, 4, 2, 3 )
+order( v1 )
+v1 <- sort( v1 )
+v1
+v2 <- sort( v1, decreasing = T )
+v2
+
+# 매트릭스와 데이터프레임 정렬
+# : 특정 열의 값을 기준으로 행들을 재배열하는 형태로 정렬
+#
+head( iris )
+order( iris$Sepal.Length )
+iris[ order( iris$Sepal.Length), ]
+iris[ order( iris$Sepal.Length, decreasing = T ), ]
+iris.new <- iris( order( iris$Sepal.Length), )
+head( iris.new )
+iris[ order( iris$Sepal.Length, decreasing =  T, iris$Petal.Length ), ]
+
+#
+# 2. 데이터 분리와 선택
+#
+# split() : 하나의 dataset을 열의 값을 기준으로 여러 개의 dataset으로 분리
+# subset() : dataset으로 부터 조건에 맞는 행들을 추출
+#
+# 데이터 분리
+sp <- split( iris, iris$Species )
+sp
+summary( sp )         #Length는 변수
+sp$setosa
+
+# 데이터 선택
+subset( iris, Species = 'setosa' )
+subset( iris, Sepal.Length > 7.5 )
+subset( iris, Sepal.Length > 5.1 & Sepal.Width > 3.9 )
+subset( iris, Sepal.Length > 7.6, select = c(Petal.Length, Petal.Width ) ) #해당관측치에 해당 변수 내용만 가져옴, 관측치 전체를 가져올거냐 해당 변수의 원원하는 것 만 가져올거냐 
+
+#
+# 3. 데이터 샘플링과 조합
+#
+# 데이터 샘플링( Sampling ) : 통계용어, 주어진 값들이 있을 때 그중에서 임의의 개수의 값들을 추출하는 작업
+#                             일부만 추출 하겠다.
+# 비복원 추출 : 한번 추출된 값은 다시 추출하지 않도록 하는 추출방식
+# 복원 추출 : 추출한 값을 확인한 후 다시 데이터에 합친 후 새로 추출하는 방식 
+# * 데이터 분석에서는 비복원 추출을 사용
+#
+# 샘플링이 필요한 경우는 dataset의 크기가 너무 커서 데이터 분석에 시간이 많이 걸릴 때 일부의 데이터만 샘플링 하여
+# 대략의 경과를 미리 확인하고자 할 때 사용
+
+#
+# 숫자를 임의의로 추출
+x <- 1:100
+y <- sample( x, size = 10, replace = FALSE )
+        # size : 추출할 값, replace = FALSE : 비복원 추출
+y
+
+# 행의 임의의 추출
+idx <- sample( 1:nrow( iris ), size = 50, replace = FALSE )
+idx.50 <- iris[ idx, ]
+dim( idx.50 )
+head( idx.50 )
+
+sample( 1:20, size = 5 )
+sample( 1:20, size = 5 )
+sample( 1:20, size = 5 )
+
+set.seed( 100 )          # 인수값(임의 값)이 동일하면 똑같은 수가 반복 될 수 있음 
+sample( 1:20, size = 5 )
+set.seed( 100 )
+sample( 1:20, size = 5 )
+set.seed( 100 )
+sample( 1:20, size = 5 )
+
+#
+# 4. 데이터 조합 ( combination ) : 주어진 데이터 값들 중에서 몇 개씩  짝을 지어 추출하는 작업
+#
+# combn() : 데이터 조합시 사용, 결과에서 각 열이 하나의 조합을 의미 
+combn( 1:5, 3 )
+
+x = c( "red", "green", "blue", "black", "white" )
+com <- combn( x, 2 )
+com
+
+for ( i in 1:ncol( com ) ) {
+    cat( com[ , i], "\n" )
+}
+
+#
+# 5. 데이터 집계와 병합
+#
+# 데이터 집계 ( aggregation ) : 매트릭스와 데이터프레임과 같은 2차원 데이터는 데이터 그룹에 대해서 합계나
+#                               평균을 계산해야 하는 경우가 많은데 이 작업을 의미한다.
+# aggregate() : 데이터 집계 함수
+#                dataset         집계기준                   집계작업내용(집계한 다음에 뭐할 건지)
+agg <- aggregate( iris[  , -5 ], by = list( iris$Species ), mean )
+agg
+
+agg <- aggregate( iris[ , -5 ], by = list( 품종 = iris$Species ), mean )
+agg
+
+agg <-  aggregate(iris[ , -5 ], by = list( 표준편차 = iris$Species ), sd )
+agg
+
+#
+# 데이터 병합( merge ) : 데이터 분석을 위해 자료를 모으다 보면 연관된 정보가 여러 파일에 흩어져 있는 경우가 
+#                        있는데 이를 합치는 작업을 의미한다.
+#
+x <- data.frame( name = c( 'a', 'b', 'c' ), math = c( 90, 80, 40 ) )
+y <- data.frame( name = c( 'a', 'b', 'd' ), korean = c( 75, 60, 90 ) )
+x
+y
+
+#                    병합기준( 이름기준으로 병합하라 하여, 이름이 같은 이름만 병합 )
+z <- merge( x, y, by = c( 'name') )
+z
+# 병합기준 정하지 않으면 이름이 같은 거로 저절로 병합 됨 
+z2 <-merge( x, y )
+z2
+
+merge( x, y, all.x = T )  #x 데이터셋에 있는것을 기준으로 함 대신 x에 같은 것만 병합 됨 
+merge( x, y, all.y = T )  
+merge( x, y, all = T )
+
+# 병합 기준이 되는 열의 이름이 다른 경우에 대한 병합
+x <- data.frame( name = c( 'a', 'b', 'c' ), math = c( 90, 80, 40 ) )
+y <- data.frame( sname = c( 'a', 'b', 'c'), korean = c(75, 60, 90 ) )
+x
+y
+merge( x, y, by.x = c( 'name' ), by.y = c( 'sname' ) ) # 변수 이름이 같으면 merge, by로 기준을 정해준다.
+#병합된 이후에 결측치가 추가되는 경우가 있다. 서로 같은내용이 없을때 
+
+#
+# DAY 8
+#
+# 2.1 dplyr패키지
+#
+# dplyr패키지는 데이터 전처리 작업에 가장많이 사용되는 패키지
+#( http://dplyr.tidyverse.org/ )
+#(https://www.tidyverse.org/packages/)
+#
+
+install.packages( "tidyverse" )
+
+setwd("C:\\Workspace\\workspaceR")
+exam <-read.csv( 'exam.csv', header = T )
+exam
+
+library( dplyr )      #패키지 적용함수
+
+#
+# filter() : dataset에 대해서 조건에 맞는 행 추출 함수
+#
+filter( exam, class == 1 )
+filter( mtcars, cyl == 4 )
+
+#
+# %>% ( 파이프 연산자, pipe operator )
+# 물길을 연결하는 수도관 처럼 함수들을 연결하는 기능을 하는 연산자
+# 입력 단축기 : ctrl + shift + m
+#
+exam %>% filter( class == 1 )
+
+mtcars %>% 
+    filter( cyl == 4 )
+
+exam %>% filter(class !=1 )
+
+exam %>% filter( korean > 50 )
+
+exam %>% filter( science <=70 )
+
+exam %>% 
+    filter( class == 1 & korean >= 50 )
+
+mtcars %>% 
+    filter( cyl >= 6 & mpg > 20 )
+
+exam %>% 
+    filter( korean >= 90 | science >=90 )
+
+exam %>% 
+    filter( class == 1 | class == 3 | class == 5 )
+
+exam %>% 
+    filter( class %in% c( 1, 3, 5 ) )
+
+class1 <- exam %>%  filter( class == 1 )
+class1
+class2 <- exam %>%  filter( class == 2 )
+class2
+mean( class1$korean )
+mean( class2$korean )
+
+#
+# select() : dataset에 대해서 일부 변수만 추출하는 함수
+#
+exam %>% 
+    select( korean )
+exam %>% 
+    select( class, korean, science )
+exam %>% 
+    select( -korean )
+
+# %>% 연산사지를 이용하면 dplyr 함수 조합
+exam %>% 
+    filter( class == 1 ) %>% 
+    select( korean )
+
+exam %>% 
+    select( id, korean ) %>% 
+    head
+
+iris %>% 
+    filter( Species == "setosa") %>% 
+    select( Petal.Length, Petal.Width ) %>%
+    tail
+
+#
+# arrange() : dataset에 대해서 원하는 순서로 정렬하는 함수
+#
+exam %>% 
+    arrange(korean )
+
+exam %>% 
+    arrange( desc( korean ) )  #내림차순
+
+exam %>% 
+    arrange( class, desc( korean ) ) #  class를 오름차순으로 정렬한후 각 반마다 korean의 변수는 내림차순 함
+
+mtcars %>% 
+    filter( mpg >= 15.0 ) %>% 
+    select( mpg, cyl ) %>% 
+    arrange( cyl, desc( mpg ) ) %>% 
+    head( 15 )
+
+#dplyr 패키지의 함수들은 함수 인수로 dataset을 반복해 입력하지 않고 파이프 연산자를 이용하여 결과를 사용함
+#으로써 스크립트가 간결해지는 장점이 있다.
+
+#
+# mutate() : dataset에 대한 파생변수 추가 함수
+#
+exam %>% 
+    mutate( tatal = korean + science ) %>% 
+    head
+
+exam %>% 
+    mutate( tatal = korean + science ,
+            average = ( korean + science ) / 2 ) %>% 
+    head
+
+#ifelse( science >= 60, 'pass', 'fall') : 삼항연산자
+#         조건          참일때  거짓일때
+exam %>% 
+    mutate( grage = ifelse( science >= 60, 'pass', 'fall' ) ) %>% 
+    head
+
+exam <- exam %>% 
+    mutate( total = korean + science, 
+            average = ( korean + science ) / 2 )
+exam%>% 
+    mutate( grade = ifelse( average >= 90 , 'A',
+                        ifelse ( average >=80, 'B',
+                                 ifelse ( average >= 70, 'C',
+                                          ifelse( average >= 60, 'D',
+                                                  'F') ) ) ) ) %>% 
+    head
+
+#
+# group_by() : dataset에 대하여 그룹으로 나누는 함수
+#
+# summarise() : dataset에 대하여 요약한 값을 추출하는 함수
+#
+exam %>% 
+    summarise( meam_korean = mean( korean ) )
+               
+exam %>% 
+    group_by( class ) %>% 
+    summarise( mean_korean = mean( korean ) )
+
+mtcars %>% 
+    group_by( cyl ) %>% 
+    summarise( mean_mpg = mean( mpg ) )
+
+exam %>% 
+    group_by( class ) %>% 
+    summarise(mean_korean = mean(korean ),
+              mean_science = mean( science ),
+              median_korean = median( korean ),
+              median_science = median( science ),
+              n = n()  )    # n() : 행의 개수
+
+mtcars %>% 
+    group_by( cyl, gear ) %>% 
+    summarise( mean_mpg = mean( mpg ) ) %>% 
+    head
+
+#
+# dplyr 패키지 함수의 조합
+#
+# 하고자 하는일 : mtcars dataset에서 cyl 별로 분리한후 gear가 4인 data를 추출한 후 wt의 합계를 추가하고 wt의
+#                 평균을 산출한 후 wt 평균순으로 정렬하여 결과 추출
+#
+mtcars %>% 
+    group_by( cyl ) %>% 
+    filter( gear == '4' )%>%
+    mutate( tot_wt = sum( wt ) ) %>% 
+    summarise( mean_wt = mean( wt ) ) %>% 
+    arrange( desc( mean_wt ) )
+#
+# distinct() : dataset에서 중복값 제거 함수
+#
+mtcars %>% 
+    distinct( cyl )
+
+mtcars %>% 
+    distinct( gear )
+
+#
+# 2.2 ggplot 패키지 ( https://ggplot2.tidyverse.org/index.html )
+#
+# ggplot : 보고서용 그래프와 같이 보다 미적이 그래프를 작성할 때 사용하는 시각화 패키지
+#          복잡하고 화려한 그래프를 작성할 수 있가는 장점은 있지만, 사용법이 어렵다는 단점이 있다.
+#
+# ggplot 패키지의 함수는 여러 개의 함수를 연결하여 사용한다.
+#
+# ggplot 패키지는 보통 하나의 ggplot()와 geom_xx() 함수들이 +로 연결되어 하나의 그래프를 완성한다.
+#
+# ggplot()의 매개변수로 그래프를 작성할 때 사용할 dataset( data = xx )과 dataset 안에서 x축, y축으로 사용할
+# 열 이름( aes( x = x1, y = x2 ) )을 지정하고 +로 연결하여 어떤 형태의 그래프를 그릴지를 
+# geom_xx()를 통해 지정한다.
+
+library( ggplot2 )
+
+month <- c( 1, 2, 3, 4, 5, 6 )
+rain <- c( 55, 50, 45, 50, 60, 70 )
+df <- data.frame( month, rain )
+df
+
+ggplot( df, aes( x = month, y = rain ) ) +      # dataset, x, y
+    geom_bar( stat = "identity",                # 막대 높이 y축값 # stat 막대높이를 뭐로 정할 거냐
+              width = 0.7,                      # 막대 폭(width)
+              fill = "pink")                    # 막대 색(fill)
+
+ggplot( df, aes( x = month, y = rain ) ) +     
+    geom_bar( stat = "identity",                
+              width = 0.7,                     
+              fill = "pink") +
+    ggtitle( "월별 강수량" ) +
+    theme( plot.title = element_text( size = 25,
+                                      face = "bold",
+                             colour = "steelblue") ) +    #그래프 제목 색
+    labs( x ="월", y = "강수량" ) +
+    coord_flip()
+# ggtitle() : 그래프 제목
+# labs() : x축, y축 레이블 지정
+# theme() : 지정된 그래프에 대한 제목의 폰트크기, 색등 지정 
+# coord_flip() : 그래프를 가로 방향으로 출력
+
+
+#
+# 히스토그램
+#
+ggplot( iris, aes( x = Petal.Length ) ) +
+    geom_histogram( binwidth = 0.5 )
+
+#그룹별 히스토그램
+ggplot( iris, aes( x = Sepal.Length,
+                   fill = Species,
+                   color = Species ) ) +
+    geom_histogram( binwidth = 0.5, position = "dodge" ) + 
+    theme( legend.position = "top" )
+
+#
+# 산점도
+#
+ggplot( data = iris, aes( x = Petal.Length,
+                          y = Petal.Width ) ) + 
+    geom_point()
+
+# 그룹으로 구분되는 산점도
+ggplot( data = iris, aes( x = Petal.Length,
+                          y = Petal.Width,
+                          color = Species ) ) + 
+    geom_point( size = 3 ) +
+    ggtitle( "꽃잎의 길이와 폭" )+
+    theme( plot.title = element_text( size = 25,
+                                      face = "bold",
+                                      colour = "steelblue" ) )
+
+#
+# 상자수염그래프
+#
+ggplot( iris, aes( y = Petal.Length ) )+        # 최대값 최소값의 선이 없어짐
+    geom_boxplot( fill = "steelblue" )
+
+#그룹별 상자수염 그래프
+ggplot( iris, aes( y = Petal.Length, fill = Species ) ) + 
+    geom_boxplot()
+
+# 
+# 선그래프
+#
+year <-  1937:1960
+cnt <- as.vector( airmiles )
+df <-  data.frame( year, cnt )
+head(df)
+
+ggplot( df, aes( x = year, y = cnt ) ) + # 선그래프는 시간정보가 있는데 데이터를 이용할 때 씀
+    geom_line( col = "red")
+
+# 상관계수 시각화
+#
+# corrplot 패키지를 이용하면 상관계수를 이용한 시각화를 표현 할 수 있다. 
+#
+# https://www.rdocumentation.org/packages/corrplot/versions/0.2-0/topics/corrplot
+#
+install.packages( "corrplot" )
+
+library( corrplot )
+
+m <- cor( mtcars )
+m
+
+corrplot( m, method = "color" )
+
+#
+# Treemap( 나무 지도 ) : 데이터가 갖는 계층 구조를 타일 모양으로 표현하는 시각화 도구
+#
+# http://www.cs.umd.edu/hcil/treemap/ 
+
+install.packages( "treemap" )
+
+library( treemap )
+
+data( GNI2014 )
+str( GNI2014 )
+
+treemap( GNI2014, index = c( "continent", "iso3" ),
+         vSize = "population",  
+         vColor = "GNI",        
+         type = "value",
+         bg.labels = "yellow" )
+# index : 계층 구조 표현
+# vSize : 각 모양 크기, vColor : 각 모양 색상
+# type : 각 모양 색깔 방법, bg.labels : 전체 배경색
+
+#
+# bubble chart : bubble chart는 산점도의 한 종류
+#                변수의 크기에 따라 bubble로 표현하는 시각화 도구
+#
+#
+library( MASS )
+
+str ( UScrime )
+head( UScrime )
+
+radius <- sqrt( UScrime$Pop )                    #원의 반지름
+symbols( UScrime$U2, UScrime$y,                  # x, y 좌표 위치
+          circle = radius,                       # 원의 반지름
+          inches = 0.4,                          # 원의 크기 조절값 
+          fg = "white", bg = "lightgray",        # 원 테두리, 바탕색
+          lwd = 1.5,                             #원의 테두리선 두께
+          xlab = "unemployment 35~39 miles",     # x축 설명
+          ylab = "crime rate",                   # y축 설명
+          main = "UScrime Data" )                # 제목
+text( UScrime$U2, UScrime$y,                     # 문자 출력 x, y 위치
+              1:nrow( UScrime ),                 # 문자로 출력할 값 
+              cex = 0.8,                         # 글자크기
+              col ="brown" )                     # 글자 색
+
+# https://developers.google.com/chart/interactive/docs/gallery/bubblechart#congiguration_Options
+
+# 
+# 2.3 Markdown 사용법
+# 
+# Markdown : 쉽게 문서를 작성하여 HTML, PDF, Word와 같은 도구에 표현할 수 있도록 하는 문서 작성 언어
+#            여러 Program Language나 web에서 사용 가능 
+#
+# *데이터 분석 보고서를 신뢰 할 수 있으려면 동일한 분석 과정을 거쳤을 때 동일한 분석 결과가 반복되어
+#  나오도록 재혀성을 갖추어야 한다.
+#
+ 
